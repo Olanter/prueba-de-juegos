@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adivinanza</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            position: relative;
+        }
+        #output {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+        #hints {
+            font-size: 16px;
+            margin-top: 10px;
+            text-align: left;
+        }
+        #score {
+            font-size: 24px;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .usedHint {
+            opacity: 0.5; /* Hace el texto transparente */
+            pointer-events: none; /* Evita que el botón sea clickeable */
+        }
+        .pistas {
+            margin-top: 125px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Adivina el número</h1>
+    <p id="score">Puntaje: 100</p>
+    <p>Estoy pensando en un número del 1 al 100. ¡Adivina cuál es!</p>
+    <input type="text" id="guessInput" pattern="[0-9]*" inputmode="numeric">
+    <button onclick="checkGuess()">Adivinar</button>
+    <p class="pistas">Pistas:</p>
+    <button id="hintButton" onclick="useHint()">Usar pista (-20 puntos)</button>
+    <p id="output"></p>
+    <div id="hints"></div>
+
+    <script>
+        const randomNumber = Math.floor(Math.random() * 100) + 1;
+        let guesses = 0;
+        let score = 100;
+        let hints = [];
+        let hintUsed = false;
+
+        function updateHints() {
+            document.getElementById('hints').innerHTML = hints.join('<br>');
+        }
+
+        function updateScore() {
+            document.getElementById('score').innerHTML = `Puntaje: ${score}`;
+        }
+
+        function checkGuess() {
+            const userGuess = parseInt(document.getElementById('guessInput').value);
+            guesses++;
+
+            if (userGuess === randomNumber) {
+                document.getElementById('output').innerHTML = `¡Felicidades! ¡Adivinaste el número en ${guesses} intentos! Tu puntaje final es ${score}.`;
+            } else if (userGuess < randomNumber) {
+                document.getElementById('output').innerHTML = 'Intenta con un número más grande.';
+                score--;
+            } else {
+                document.getElementById('output').innerHTML = 'Intenta con un número más pequeño.';
+                score--;
+            }
+            updateScore();
+        }
+
+        function useHint() {
+            if (!hintUsed) {
+                const isEven = randomNumber % 2 === 0;
+                hints.push(`El número es ${isEven ? 'par' : 'impar'}. Pista -20 puntos`);
+                updateHints();
+                score -= 20;
+                updateScore();
+                hintUsed = true;
+                document.getElementById('hintButton').classList.add('usedHint');
+            }
+        }
+    </script>
+</body>
+</html>
